@@ -56,7 +56,7 @@ class PhpCasProxy extends PhpCas
                 session_start();
                 $_SESSION['service'] = $_GET[$serviceKey];
                 session_write_close();
-                $this->login();
+                $this->login($proxyService);
                 break;
             case 'serviceValidate':
                 if (!isset($_GET[$serviceKey]) || !isset($_GET[$ticketKey])) {
