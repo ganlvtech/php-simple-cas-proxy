@@ -34,16 +34,15 @@ class PhpCasProxy extends PhpCas
      * @param string|null $proxyService
      * @param string $serviceKey
      * @param string $ticketKey
+     * @param string $cookieName
      *
      * @return int HTTP response code
      */
-    public function proxy($service_validate_func = null, $proxyService = null, $serviceKey = 'service', $ticketKey = 'ticket')
+    public function proxy($service_validate_func = null, $proxyService = null, $serviceKey = 'service', $ticketKey = 'ticket', $cookieName = 'service')
     {
         switch (self::getPathinfo()) {
             case 'logout':
-                session_start();
-                unset($_SESSION['service']);
-                session_write_close();
+                self::removeCookie($cookieName);
                 $this->logout();
                 break;
             case 'login':
@@ -53,9 +52,7 @@ class PhpCasProxy extends PhpCas
                 if ($service_validate_func && !call_user_func($service_validate_func, $_GET[$serviceKey])) {
                     return 403;
                 }
-                session_start();
-                $_SESSION['service'] = $_GET[$serviceKey];
-                session_write_close();
+                setcookie($cookieName, $_GET[$serviceKey], time() + 300); // available in five minutes
                 $this->login($proxyService);
                 break;
             case 'serviceValidate':
@@ -73,18 +70,24 @@ class PhpCasProxy extends PhpCas
                 if (!isset($_GET[$ticketKey])) {
                     return 404;
                 }
-                session_start();
-                if (!isset($_SESSION['service'])) {
+                if (!isset($_COOKIE[$cookieName])) {
                     return 403;
                 }
-                $service = $_SESSION['service'];
-                unset($_SESSION['service']);
-                session_write_close();
+                $service = $_COOKIE[$cookieName];
+                if ($service_validate_func && !call_user_func($service_validate_func, $service)) {
+                    return 403;
+                }
+                self::removeCookie($cookieName);
                 self::redirect($service . '?' . http_build_query(array(
-                        'ticket' => $_GET[$ticketKey],
+                        $ticketKey => $_GET[$ticketKey],
                     )));
                 break;
         }
+    }
+
+    public static function removeCookie($name)
+    {
+        setcookie($name, null, 1);
     }
 
     public static function getPathinfo()

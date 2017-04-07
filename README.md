@@ -21,6 +21,10 @@ $phpCasProxy = new PhpCasProxy('https://cas.xjtu.edu.cn/');
 http_response_code($phpCasProxy->proxy());
 ```
 
+## About the proxy server
+
+You must login within 5 min, or cookie will be expired, and response may be 403.
+
 ## How to test
 
 Add your service domain to `hosts`
