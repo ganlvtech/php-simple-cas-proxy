@@ -1,6 +1,6 @@
 {
     "name": "ganlvtech/php-simple-cas-proxy",
-    "description": "A simple proxy distribute the CAS ticket.",
+    "description": "A simple proxy dispatch the CAS ticket.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -9,18 +9,9 @@
             "email": "ganlvtech@qq.com"
         }
     ],
-    "require": {
-        "ganlvtech/php-simple-cas": "^1.0"
-    },
     "autoload": {
       "psr-4": {
           "PhpSimpleCas\\": "src"
       }
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.org"
-        }
     }
 }
